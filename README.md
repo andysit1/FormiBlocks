@@ -17,8 +17,6 @@ These code blocks can then be created with AI agents. Ideally, since it's small 
 - Handle Terminal
 - Opening files
   - How do you handle file systems on my computer and how can we call it without too much hard coding
-  - Solution?
-    - Check desktop for shortcuts and compile all shortcuts possible?
 - Starting Bat Files
 - Do easy tasks that I do not what to do
 - Generate script file/bat files to do basic work

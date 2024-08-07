@@ -22,7 +22,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
 """
 
 def opencmd():
-    subprocess.run(['start', 'cmd'], shell=True)
+    subprocess.run(['start', 'cmd'], shell=True) #automatically calls the virtual env of the subprocess, this is nice!
 
 def runandget():
     myprocess = subprocess.run(["ls"], stdout=subprocess.PIPE)

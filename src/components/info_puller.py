@@ -4,3 +4,5 @@
     all possible runnable
     holds history for process (far future feature)
 """
+
+# given a pc we want to call load 
