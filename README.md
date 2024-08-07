@@ -10,3 +10,15 @@ I was working on a Jarvis for fun to interact between an llm and code. Realized 
 In the future, I want my voice to be transcribed into a code D-WDX (TBD). Which then will pushed to the API to be processed an ran on our local computer. Thought it would be interesting since it would allow all the libraries in python to be used through a local sever. Handling terminal, project setup, or other bat file automated files.
 
 These code blocks can then be created with AI agents. Ideally, since it's small it would be able to create powerful scripts that can come bigger system that do powerful tasks. Community would be an important aspect so that we have developer creating their own plugins/blocks of code that can work together.
+
+
+## Features
+
+- Handle Terminal
+- Opening files
+  - How do you handle file systems on my computer and how can we call it without too much hard coding
+  - Solution?
+    - Check desktop for shortcuts and compile all shortcuts possible?
+- Starting Bat Files
+- Do easy tasks that I do not what to do
+- Generate script file/bat files to do basic work
