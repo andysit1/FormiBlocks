@@ -7,7 +7,6 @@
 
 BATSCRIPTS = "../bat_scripts/"
 
+# Paths
 
-
-
-
+program_path = ""
