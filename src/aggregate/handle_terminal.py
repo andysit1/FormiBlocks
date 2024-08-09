@@ -2,16 +2,22 @@ import shutil
 import subprocess
 import os
 import re
+
+import ast
 from icecream import ic
 program_path = "C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+from file_handler import FileHandleComponent
 
-class FileSystem:
+
+pc = r"E:\projects\2024\FormiBlocks\cache\program_cache.txt"
+
+class FileSystem(FileHandleComponent):
     def __init__(self) -> None:
         self.program_dict = {}
-        self.cache_programs()
         self.find_programs()
-
+        self.cache_programs()
         self.not_program = re.compile(pattern="uninstall")
+
 
     def find_programs(self):
         """
@@ -54,7 +60,16 @@ class FileSystem:
 
     #on start up
     def cache_programs(self):
-        pass
+      #TODO/FEATURE: check if cache file has been updated within day if not then cache new programs
+
+      #https://stackoverflow.com/questions/36965507/writing-a-dictionary-to-a-text-file
+      with open(pc, 'w') as f:
+        print(self.program_dict, file=f)
+
+    def load_program(self):
+      with open(pc, 'r') as f:
+          info = f.read()
+          return ast.literal_eval(info)
 
     def get_programs(self):
         return self.program_dict
@@ -77,10 +92,6 @@ def find_shortcuts(root_dir):
 
     return shortcuts
 
-
-
-    start
-
 """
   steam://rungameid/{id of game}
   we could just find a way to regex and pin the id to the game then call steam://rungameid/id of game
@@ -90,7 +101,6 @@ def find_shortcuts(root_dir):
 if __name__ == "__main__":
   fs = FileSystem()
   print(fs.search_key("apex")) # returns C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs\Steam\Apex Legends.url
-
 
   """
     take format into into lower
