@@ -3,21 +3,52 @@ import subprocess
 import os
 import re
 
+import questionary
 import ast
 from icecream import ic
-program_path = "C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
 from file_handler import FileHandleComponent
+# from src.config import program_path
 
+"""
+    TODO move this file to components
+"""
+
+program_path = [r"C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs", r"C:\Program Files (x86)", r"C:\Program Files"]
 
 pc = r"E:\projects\2024\FormiBlocks\cache\program_cache.txt"
 
 class FileSystem(FileHandleComponent):
     def __init__(self) -> None:
         self.program_dict = {}
-        self.find_programs()
-        self.cache_programs()
+        self.all_program_paths = program_path
+        self.daily_cache()
+
+
+        #regrez
         self.not_program = re.compile(pattern="uninstall")
 
+    def daily_cache(self):
+        import time
+
+        if os.path.exists(pc):
+            # Get the current time
+            now = time.time()
+            # Define the time threshold (24 hours ago)
+            time_threshold = now - 24 * 60 * 60 # time last 24 hours ago
+
+            last_mod = os.path.getmtime(pc) #last mod
+
+            if last_mod > time_threshold:
+                self.find_programs()
+                self.cache_programs()
+            else:
+                self.load_program()
+
+            ic(last_mod, time_threshold)
+            return
+
+        self.find_programs()
+        self.cache_programs()
 
     def find_programs(self):
         """
@@ -27,17 +58,22 @@ class FileSystem(FileHandleComponent):
         :return: List of paths to .lnk files
         """
 
+        for path in self.all_program_paths:
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    #when shortcut or exe add to program_dict
+                    if file.lower().endswith('.lnk') or file.lower().endswith('.url') or file.lower().endswith('.exe'):
+                        self.program_dict[file.lower()] = os.path.join(root, file)
 
-        for root, dirs, files in os.walk(program_path):
-            for file in files:
-                if file.lower().endswith('.lnk'):
-                    self.program_dict[file.lower()] = os.path.join(root, file)
+    def ask_user_search_key(self, shortcut_choice : list):
+        choice = questionary.select(
+            "Select an option:",
+            choices=shortcut_choice
+        ).ask()
 
-                if file.lower().endswith('.url'):
-                    self.program_dict[file.lower()] = os.path.join(root, file)
+        return self.program_dict[choice]
 
     def search_key(self, key : str):
-
         regex_cmd = re.compile(pattern="({})".format(key.lower()))
         list_of_match = []
         for key in self.program_dict.keys():
@@ -50,13 +86,17 @@ class FileSystem(FileHandleComponent):
 
         ic(list_of_match, len(list_of_match))
 
+
         if len(list_of_match) == 1:
             return self.program_dict[list_of_match[0]]
 
         if len(list_of_match) == 0:
             return None
 
-        raise TypeError("need a more specific key word to find key")
+        if list_of_match:
+            return self.ask_user_search_key(list_of_match)
+
+        print("Found no matches")
 
     #on start up
     def cache_programs(self):
@@ -74,24 +114,6 @@ class FileSystem(FileHandleComponent):
     def get_programs(self):
         return self.program_dict
 
-def find_shortcuts(root_dir):
-    """
-    Recursively finds all .lnk shortcut files in the given directory.
-
-    :param root_dir: The directory to start searching from
-    :return: List of paths to .lnk files
-    """
-    shortcuts = []
-
-    for root, dirs, files in os.walk(root_dir):
-        for file in files:
-            if file.lower().endswith('.lnk'):
-                shortcuts.append(os.path.join(root, file))
-            if file.lower().endswith('.url'):
-                shortcuts.append(os.path.join(root, file))
-
-    return shortcuts
-
 """
   steam://rungameid/{id of game}
   we could just find a way to regex and pin the id to the game then call steam://rungameid/id of game
@@ -100,7 +122,9 @@ def find_shortcuts(root_dir):
 
 if __name__ == "__main__":
   fs = FileSystem()
-  print(fs.search_key("apex")) # returns C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs\Steam\Apex Legends.url
+  print(fs.get_programs())
+  print(fs.search_key("unity"))
+#   print(fs.search_key("zoom")) # returns C:/Users/andys/AppData/Roaming/Microsoft/Windows/Start Menu/Programs\Steam\Apex Legends.url
 
   """
     take format into into lower
