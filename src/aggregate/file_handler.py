@@ -84,6 +84,8 @@ class FileHandleComponent:
         with open(path, 'w') as file:
             file.writelines(str(line) + '\n' for line in lines)
 
+    
+
     def file_exists(self, path) -> bool:
         """Check if the file exists."""
         return os.path.isfile(path)
